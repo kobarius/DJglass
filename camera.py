@@ -9,6 +9,7 @@ class Camera():
     def __init__(self, w=32, h=32):
         self.width = w
         self.height = h
+        self.num = 0
     def setup(self):
         self.camera = picamera.PiCamera()
         self.camera.start_preview()
@@ -16,7 +17,10 @@ class Camera():
     def captureImg(self):
         with picamera.array.PiRGBArray(self.camera) as stream:
             self.camera.capture(stream, 'bgr')
+            # save image "img/djglass_cap_0001.jpg"
+            self.camera.capture("img/djglass_cap_" + ("0000" + str(self.num))[-4:]+ ".jpg" )
             image = stream.array
+        self.num += 1
         return image
 
 class DummyCamera():

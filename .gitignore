@@ -2,3 +2,5 @@
 *~
 *.pyc
 
+img/*
+!sample.jpg
