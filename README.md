@@ -12,7 +12,7 @@ please use python3
 ## HOW TO USE
 please use python3.5 or later
 ```
-python .\dj_glass.py --dummycamera --debug 
+python dj_glass.py --dummycamera --debug 
 ```
 * --debug : デバッグモード
 * --dummycamera : picameraなしで実行代わりにサンプル画像をよみこむ
