@@ -4,3 +4,5 @@
 
 img/*
 !sample.jpg
+
+*.pickle

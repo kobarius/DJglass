@@ -11,10 +11,13 @@ class Camera():
         self.num = 0
         self.logger=logger
         self.debug=debug
+        self.save_img = True
+
     def setup(self):
         self.camera = picamera.PiCamera()
-        self.camera.start_preview()
         self.camera.resolution = (self.width, self.height)
+        if self.debug:
+            self.camera.start_preview()
         if not self.logger:
             self.logger = getLogger("PICAMERA")
             self.logger.setLevel(logging.DEBUG)
@@ -31,7 +34,7 @@ class Camera():
         with picamera.array.PiRGBArray(self.camera) as stream:
             self.camera.capture(stream, 'bgr')
             image = stream.array
-            if debug:
+            if self.save_img:
                 # save image "img/djglass_cap_0001.jpg"
                 img_name = "img/djglass_cap_" + ("0000" + str(self.num))[-4:]+ ".jpg"
                 self.camera.capture(img_name)
@@ -47,7 +50,6 @@ def main():
     camera.setup()
     while True:
         img = camera.captureImg()
-        print(img)
         time.sleep(1)
 
 if __name__ == '__main__':

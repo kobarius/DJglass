@@ -35,12 +35,12 @@ def main(dummy = False, debug = False):
     cam.setup()
     
     # setup drink detector
-    dd = drink_detect.DrinkDetector()
+    dd = drink_detect.DrinkDetector(debug=debug)
     dd.setup()
 
     while True:
         img = cam.captureImg()
-        logger.debug(img)
+        #logger.debug(img)
         answer = dd.detect(img)
         logger.debug(answer)
         time.sleep(1)

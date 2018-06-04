@@ -25,6 +25,6 @@ class DummyCamera():
             self.logger.addHandler(stream_handler)
     def captureImg(self):
         #TODO read image file
-        image = np.zeros([self.width, self.height])
+        image = np.random.randint(0, 255, [self.width, self.height, 3])
         self.logger.debug("capture image")
         return image
