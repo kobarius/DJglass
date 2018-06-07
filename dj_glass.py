@@ -3,24 +3,42 @@
 import argparse
 import drink_detect
 import time
+import threading
 
 # ログのライブラリ
 import logging
 from logging import getLogger, StreamHandler, Formatter
 
 # loggerの設定
-## loggerオブジェクトの宣言
 logger = getLogger("DJGLASS")
-## loggerのログレベル設定(ハンドラに渡すエラーメッセージのレベル)
 logger.setLevel(logging.DEBUG)
-## handlerの生成
 stream_handler = StreamHandler()
-## ログ出力フォーマット設定
 handler_format = Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 stream_handler.setFormatter(handler_format)
-# loggerにhandlerをセット
 logger.addHandler(stream_handler)
-# loggerの設定終わり
+
+# Drink ID (global)
+global_drink_id = 0
+
+
+def cameraThread(cam, dd):
+    global global_drink_id 
+    while True:
+        img = cam.captureImg()
+        #logger.debug(img)
+        answer = dd.detect(img)
+        global_drink_id = answer["id"]
+        logger.debug(answer)
+        time.sleep(1)
+
+
+def djThread():
+    global global_drink_id 
+    while True:
+        logger.debug("DJ change music" + str(global_drink_id))
+        time.sleep(3)
+
+
 
 def main(dummy = False, debug = False):
     # setup camera
@@ -38,12 +56,23 @@ def main(dummy = False, debug = False):
     dd = drink_detect.DrinkDetector(debug=debug)
     dd.setup()
 
-    while True:
-        img = cam.captureImg()
-        #logger.debug(img)
-        answer = dd.detect(img)
-        logger.debug(answer)
-        time.sleep(1)
+    # setup DJ
+    #TODO
+
+    # make camera thread
+    # camera thred set global_drink_id
+    camera_thread = threading.Thread(target=cameraThread, args=([cam, dd]))
+
+
+    # make DJ thread
+    # DJ thread get global_drink_id
+    #TODO
+    dj_thread = threading.Thread(target=djThread)
+
+
+    camera_thread.start()
+    dj_thread.start()
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -56,5 +85,4 @@ if __name__ == '__main__':
     else:
         stream_handler.setLevel(logging.INFO)
     main(debug=args.debug, dummy=args.dummycamera)
-
 

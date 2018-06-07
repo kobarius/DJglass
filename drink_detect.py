@@ -10,7 +10,8 @@ from logging import getLogger, StreamHandler, Formatter
 
 class DrinkDetector():
     def __init__(self,debug=False, logger=None):
-        self.drink_list = ("no_drink", "beer", "orange", "coke", "lemon-chu")
+        #self.drink_list = ("no_drink", "beer", "orange", "coke", "lemon-chu")
+        self.drink_list = ("no_drink", "beer", "beer", "coke", "no_drink")
         self.logger=logger
         self.debug=debug
         self.model_pickle_name = 'djglass_model.pickle'
@@ -39,8 +40,12 @@ class DrinkDetector():
             images = glob.glob(os.path.join("./img/train/",str(i), "*.jpg"))
             # read_img
             for img_name in images:
-                img = np.asarray(Image.open(img_name)).mean(axis=(0)).flatten()
-                norm_img = img /255.
+                h, s, v = Image.open(img_name).convert("HSV").split()
+                np_h = np.asarray(h).flatten()
+                np_s = np.asarray(s).flatten()
+                np_v = np.asarray(v).flatten()
+                img_np = np.hstack((np_h, np_s, np_v))
+                norm_img = img_np / 255.
                 data.append(norm_img)
                 label.append(i)
                 self.logger.debug(norm_img)
@@ -48,7 +53,7 @@ class DrinkDetector():
 
         # split date into train and test
         data_num = len(data)
-        test_size = 10
+        test_size = 60
         train_size = data_num-test_size
         data_train, data_test, label_train, label_test = model_selection.train_test_split(data, label, test_size=test_size, train_size=train_size)
 
@@ -76,7 +81,12 @@ class DrinkDetector():
         input: img (numpyarray int8 32*32)
         output: {'id': drink_id(int), 'name': drink_name(str)}
         '''
-        norm_img = img.mean(axis=(0)).flatten()/255.
+        h, s, v = Image.fromarray(img).convert("HSV").split()
+        np_h = np.asarray(h).flatten()
+        np_s = np.asarray(s).flatten()
+        np_v = np.asarray(v).flatten()
+        img_np = np.hstack((np_h, np_s, np_v))
+        norm_img = img_np.flatten()/255.
         self.logger.debug(norm_img)
         self.logger.debug(norm_img.shape)
         drink_id = self.model.predict([norm_img])[0]

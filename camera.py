@@ -16,8 +16,11 @@ class Camera():
     def setup(self):
         self.camera = picamera.PiCamera()
         self.camera.resolution = (self.width, self.height)
+        #self.camera.exposure_mode = ("night")
+        #self.camera.awb_mode = ("shade")
         if self.debug:
-            self.camera.start_preview()
+            #self.camera.start_preview()
+            pass
         if not self.logger:
             self.logger = getLogger("PICAMERA")
             self.logger.setLevel(logging.DEBUG)
@@ -46,7 +49,7 @@ class Camera():
 def main():
     CAPTURE_WIDTH = 32
     CAPTURE_HEIGHT = 32
-    camera = Camera(CAPTURE_WIDTH,CAPTURE_HEIGHT)
+    camera = Camera(CAPTURE_WIDTH,CAPTURE_HEIGHT,debug=True)
     camera.setup()
     while True:
         img = camera.captureImg()
