@@ -35,6 +35,7 @@ def cameraThread(cam, dd):
 def djThread():
     global global_drink_id 
     while True:
+        monotron(global_drink_id)
         logger.debug("DJ change music" + str(global_drink_id))
         time.sleep(3)
 
