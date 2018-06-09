@@ -9,6 +9,8 @@ import threading
 import logging
 from logging import getLogger, StreamHandler, Formatter
 
+from monotron import monotron
+
 # loggerの設定
 logger = getLogger("DJGLASS")
 logger.setLevel(logging.DEBUG)
@@ -35,8 +37,9 @@ def cameraThread(cam, dd):
 def djThread():
     global global_drink_id 
     while True:
+        monotron(global_drink_id)
         logger.debug("DJ change music" + str(global_drink_id))
-        time.sleep(3)
+#        time.sleep(3)
 
 
 
