@@ -5,28 +5,20 @@ import pickle
 import numpy as np
 from sklearn import model_selection, svm, metrics
 from PIL import Image
-import logging
-from logging import getLogger, StreamHandler, Formatter
+from logging import getLogger, DEBUG, NullHandler
+
+local_logger = getLogger(__name__)
+local_logger.addHandler(NullHandler())
+local_logger.setLevel(DEBUG)
+local_logger.propagate = True
 
 class DrinkDetector():
     def __init__(self,debug=False, logger=None):
         #self.drink_list = ("no_drink", "beer", "orange", "coke", "lemon-chu")
         self.drink_list = ("no_drink", "beer", "beer", "coke", "no_drink")
-        self.logger=logger
+        self.logger=logger or local_logger
         self.debug=debug
         self.model_pickle_name = 'djglass_model.pickle'
-
-        if not self.logger:
-            self.logger = getLogger("DRINK_DET")
-            self.logger.setLevel(logging.DEBUG)
-            stream_handler = StreamHandler()
-            if self.debug:
-                stream_handler.setLevel(logging.DEBUG)
-            else:
-                stream_handler.setLevel(logging.INFO)
-            handler_format = Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-            stream_handler.setFormatter(handler_format)
-            self.logger.addHandler(stream_handler)
 
     def setup(self):
         # load model
@@ -53,7 +45,7 @@ class DrinkDetector():
 
         # split date into train and test
         data_num = len(data)
-        test_size = 60
+        test_size = int(data_num/5)
         train_size = data_num-test_size
         data_train, data_test, label_train, label_test = model_selection.train_test_split(data, label, test_size=test_size, train_size=train_size)
 

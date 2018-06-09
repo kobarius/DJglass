@@ -1,6 +1,11 @@
 import numpy as np
 import logging
-from logging import getLogger, StreamHandler, Formatter
+from logging import getLogger, DEBUG, NullHandler
+
+local_logger = getLogger(__name__)
+local_logger.addHandler(NullHandler())
+local_logger.setLevel(DEBUG)
+local_logger.propagate = True
 
 class DummyCamera():
     '''
@@ -9,22 +14,14 @@ class DummyCamera():
     def __init__(self, w=32, h=32, debug=False, logger=None):
         self.width = w
         self.height = h
-        self.logger=logger
+        self.logger=logger or local_logger
         self.debug=debug
+
     def setup(self):
-        if not self.logger:
-            self.logger = getLogger("DUMMYCAMERA")
-            self.logger.setLevel(logging.DEBUG)
-            stream_handler = StreamHandler()
-            if self.debug:
-                stream_handler.setLevel(logging.DEBUG)
-            else:
-                stream_handler.setLevel(logging.INFO)
-            handler_format = Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-            stream_handler.setFormatter(handler_format)
-            self.logger.addHandler(stream_handler)
+        self.logger.debug("finish setup")
+
     def captureImg(self):
         #TODO read image file
-        image = np.random.randint(0, 255, [self.width, self.height, 3])
+        image = np.random.randint(0, 255, [self.width, self.height, 3], dtype=np.uint8)
         self.logger.debug("capture image")
         return image

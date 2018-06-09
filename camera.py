@@ -1,15 +1,20 @@
 import time
 import picamera
 import picamera.array
-import logging
-from logging import getLogger, StreamHandler, Formatter
+from logging import getLogger, DEBUG, NullHandler
+
+local_logger = getLogger(__name__)
+local_logger.addHandler(NullHandler())
+local_logger.setLevel(DEBUG)
+local_logger.propagate = True
+
 
 class Camera():
     def __init__(self, w=32, h=32, debug=False, logger=None):
         self.width = w
         self.height = h
         self.num = 0
-        self.logger=logger
+        self.logger = logger or local_logger
         self.debug=debug
         self.save_img = True
 
@@ -21,17 +26,6 @@ class Camera():
         if self.debug:
             #self.camera.start_preview()
             pass
-        if not self.logger:
-            self.logger = getLogger("PICAMERA")
-            self.logger.setLevel(logging.DEBUG)
-            stream_handler = StreamHandler()
-            if self.debug:
-                stream_handler.setLevel(logging.DEBUG)
-            else:
-                stream_handler.setLevel(logging.INFO)
-            handler_format = Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-            stream_handler.setFormatter(handler_format)
-            self.logger.addHandler(stream_handler)
 
     def captureImg(self):
         with picamera.array.PiRGBArray(self.camera) as stream:

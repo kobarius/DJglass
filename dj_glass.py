@@ -1,23 +1,20 @@
 #! /usr/bin/python3
 # coding:utf-8
-import argparse
-import drink_detect
 import time
 import threading
+import argparse
+from logging import getLogger, StreamHandler, Formatter, DEBUG, INFO
 
-# ログのライブラリ
-import logging
-from logging import getLogger, StreamHandler, Formatter
-
+import drink_detect
 from monotron import monotron
 
-# loggerの設定
-logger = getLogger("DJGLASS")
-logger.setLevel(logging.DEBUG)
-stream_handler = StreamHandler()
-handler_format = Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-stream_handler.setFormatter(handler_format)
-logger.addHandler(stream_handler)
+# root rogger setting
+logger = getLogger()
+formatter = Formatter('%(asctime)s %(name)s %(funcName)s [%(levelname)s]: %(message)s')
+handler = StreamHandler()
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+logger.setLevel(DEBUG)
 
 # Drink ID (global)
 global_drink_id = 0
@@ -27,10 +24,9 @@ def cameraThread(cam, dd):
     global global_drink_id 
     while True:
         img = cam.captureImg()
-        #logger.debug(img)
         answer = dd.detect(img)
         global_drink_id = answer["id"]
-        logger.debug(answer)
+        logger.info(answer)
         time.sleep(1)
 
 
@@ -39,7 +35,6 @@ def djThread():
     while True:
         monotron(global_drink_id)
         logger.debug("DJ change music" + str(global_drink_id))
-#        time.sleep(3)
 
 
 
@@ -49,10 +44,10 @@ def main(dummy = False, debug = False):
     CAPTURE_HEIGHT = 32
     if dummy:
         import dummy_camera
-        cam = dummy_camera.DummyCamera(CAPTURE_WIDTH,CAPTURE_HEIGHT, debug=debug)
+        cam = dummy_camera.DummyCamera(CAPTURE_WIDTH, CAPTURE_HEIGHT, debug=debug)
     else:
         import camera
-        cam = camera.Camera(CAPTURE_WIDTH,CAPTURE_HEIGHT, debug=debug)
+        cam = camera.Camera(CAPTURE_WIDTH, CAPTURE_HEIGHT, debug=debug)
     cam.setup()
     
     # setup drink detector
@@ -69,7 +64,6 @@ def main(dummy = False, debug = False):
 
     # make DJ thread
     # DJ thread get global_drink_id
-    #TODO
     dj_thread = threading.Thread(target=djThread)
 
 
@@ -84,8 +78,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
     # set logging handler level
     if args.debug:
-        stream_handler.setLevel(logging.DEBUG)
+        handler.setLevel(DEBUG)
     else:
-        stream_handler.setLevel(logging.INFO)
+        handler.setLevel(INFO)
     main(debug=args.debug, dummy=args.dummycamera)
 
