@@ -19,10 +19,10 @@ def monotron(drink_id) :
     pi.set_mode(18,pigpio.OUTPUT) # tone
     pi.write(17,1)
 
-    list0a = [aa, a,aa, a,aa,aa, a, f, f, g, e, e, d, c, c, d]	# no_drink tone
-    list0b = [ 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0]	# no_drink vol
-    list1a = [aa, a,aa, a,aa, a,aa, a,aa, a,aa, a,aa, a,aa, a]	# beer tone
-    list1b = [ 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]	# beer vol
+    list0a = [aa, a,aa, a,aa, a,aa, a,aa, a,aa, a,aa, a,aa, a]	# no_drink tone
+    list0b = [ 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]	# no_drink vol
+    list1a = [aa, a,aa, a,aa,aa, a, f, f, g, e, e, d, c, c, d]	# beer tone
+    list1b = [ 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0]	# beer vol
     list2a = [ a, a, a, d, d, d, a, b, c, d, e, f, g,aa, a, d]	# coke tone
     list2b = [ 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0]	# coke vol
 
